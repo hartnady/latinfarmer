@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agricola Cards</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f1ea; color: #3e3a32; }
+        table { font-family: 'Arial', sans-serif; border-collapse: collapse; width: 100%; background-color: #fbf8f1; }
+        th, td { font-family: 'Arial', sans-serif; text-align: left; padding: 8px; border: 1px solid #ddd; font-size: 14px; /* Adjusted font size */ }
+        th { background-color: #b4a284; color: white; cursor: pointer; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr:hover { background-color: #ddd; }
+        input, button { font-family: 'Arial', sans-serif; margin: 10px 0; padding: 10px; background-color: #eae7dc; border: none; border-radius: 4px; }
+        button { cursor: pointer; background-color: #8a7e66; color: white; }
+        button:hover { background-color: #726953; }
+        a { color: #8a7747; text-decoration: none; transition: color 0.3s ease; font-family: 'Arial', sans-serif; font-size: 12px; }
+        a:hover, a:focus { color: #b29a5b; text-decoration: underline; }
+        .spinner {
+            border: 16px solid #f3f3f3; border-radius: 50%; border-top: 16px solid #3498db; width: 120px; height: 120px; animation: spin 2s linear infinite;
+            position: absolute; top: 50%; left: 50%; margin: -60px 0 0 -60px; z-index: 1000;
+        }
+        @media (max-width: 600px) { input, button { padding: 32px; font-size: 32px; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+</head>
+<body>
+    <div class="spinner"></div> <!-- Spinner Markup -->
+
+    <input type="text" id="filter_card_title" placeholder="Filter by Card Title">
+    <input type="text" id="filter_rating" placeholder="Filter by Rating">
+    <input type="text" id="filter_insight" placeholder="Filter by Insight">
+    <input type="text" id="filter_text" placeholder="Filter by Text">
+    <input type="text" id="filter_cost" placeholder="Filter by Cost">
+    <input type="text" id="filter_type" placeholder="Filter by Type">
+    <input type="text" id="filter_category" placeholder="Filter by Category">
+    <input type="text" id="filter_base_expansion" placeholder="Filter by Base/Expansion">
+    <input type="text" id="filter_vps" placeholder="Filter by VPS">
+    <input type="text" id="filter_players" placeholder="Filter by Players">
+    <button onclick="loadData()">Filter</button>
+
+    <table id="cards_table">
+        <thead>
+            <tr>
+                <th onclick="sortData('card_title')">Card Title</th>
+                <th onclick="sortData('rating')">Rating</th>
+                <th onclick="sortData('insight')">Insight</th>
+                <th onclick="sortData('text')">Text</th>
+                <th onclick="sortData('cost')">Cost</th>
+                <th onclick="sortData('type')">Type</th>
+                <th onclick="sortData('category')">Category</th>
+                <th onclick="sortData('base_expansion')">Base/Expansion</th>
+                <th onclick="sortData('vps')">VPS</th>
+                <th onclick="sortData('players')">Players</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <div align="center">
+        <a href="/latin_farmer">Click here for card inspector</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentYear = new Date().getFullYear();
+            var copyrightElement = document.getElementById('copyright');
+            copyrightElement.innerHTML = '&copy; Mark Hartnady, ' + currentYear;
+        });
+
+        let currentSort = { column: 'id', order: 'asc' };
+
+        function loadData() {
+            $('.spinner').show();
+
+            let filterParams = {
+                sort: currentSort.column, order: currentSort.order,
+                card_title: $('#filter_card_title').val(),
+                rating: $('#filter_rating').val(),
+                insight: $('#filter_insight').val(),
+                text: $('#filter_text').val(),
+                cost: $('#filter_cost').val(),
+                type: $('#filter_type').val(),
+                category: $('#filter_category').val(),
+                base_expansion: $('#filter_base_expansion').val(),
+                vps: $('#filter_vps').val(),
+                players: $('#filter_players').val(),
+            };
+
+            $.getJSON('/get-cards', filterParams, function(cards) {
+                $('#cards_table tbody').empty();
+                $.each(cards, function(index, card) {
+                    let row = `<tr>
+                                <td>${card.card_title}</td>
+                                <td>${card.rating}</td>
+                                <td>${card.insight}</td>
+                                <td>${card.text}</td>
+                                <td>${card.cost}</td>
+                                <td>${card.type}</td>
+                                <td>${card.category}</td>
+                                <td>${card.base_expansion}</td>
+                                <td>${card.vps}</td>
+                                <td>${card.players}</td>
+                               </tr>`;
+                    $('#cards_table tbody').append(row);
+                });
+                $('.spinner').hide();
+            }).fail(function() {
+                $('.spinner').hide();
+                console.error("Failed to fetch data.");
+            });
+        }
+
+        function sortData(column) {
+            if (currentSort.column === column) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.order = 'asc';
+            }
+            loadData();
+        }
+
+        $(document).ready(function() {
+            $('.spinner').hide();
+            loadData();
+
+            // Bind event handlers to filter input fields
+            $('input').on('focusout keypress', function(e) {
+                // Check if focusout event or Enter key press event
+                if(e.type === "focusout" || (e.type === "keypress" && e.which === 13)) {
+                    loadData();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
