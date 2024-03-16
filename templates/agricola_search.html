@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Agricola Cards</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f4f4f2;
+            font-family: 'Arial', sans-serif;
+        }
+
+        a {
+            color: #8a7747; /* Warm earthy tone for links */
+            text-decoration: none; /* No underline to keep it clean */
+            transition: color 0.3s ease; /* Smooth transition for hover effect */
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+        }
+
+        a:hover, a:focus {
+            color: #b29a5b; /* Lighter earthy tone on hover/focus for visibility */
+            text-decoration: underline; /* Underline on hover/focus for emphasis */
+        }
+
+
+        .agricola-heading {
+            color: #515a47; /* Earthy green, similar to other text elements */
+            font-family: 'Arial', sans-serif; /* Matching the input box font */
+            text-align: center;
+            margin-bottom: 20px; /* Space below the heading */
+            font-size: 2em; /* Large, readable size */
+            text-shadow: 2px 2px 4px #f4f4f2; /* Subtle shadow for depth */
+        }
+
+        .search-container {
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        img {
+            max-width: 80%;
+            height: auto;
+            margin-bottom: 2vh;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px;
+            font-size: calc(1em + 1vw);
+            margin: 0 auto 20px;
+            border: 2px solid #91a656;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #filterInput {
+            width: 100%;
+            padding: 15px;
+            font-size: calc(1em + 1vw);
+            margin: 0 auto 20px;
+            border: 2px solid #91a656;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #results {
+            list-style-type: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #results li {
+            padding: 8px;
+            background-color: #fdfdfd;
+            border-bottom: 1px solid #91a656;
+            color: #515a47;
+            font-family: 'Arial', sans-serif; /* Consistency with the input font */
+        }
+
+        #results li:last-child {
+            border-bottom: none;
+        }
+
+        #results li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .card-description {
+            font-size: 0.9em;
+            color: #708238;
+            font-style: italic; /* A touch of style for insights */
+        }
+
+        .card-rating {
+            font-weight: bold;
+            color: #a67248; /* Earthy tone for emphasis */
+            font-size: 1.1em;
+        }
+
+        .card-deck {
+            font-size: 0.9em;
+            color: #6c8ea0;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-base {
+            font-size: 0.9em;
+            color: #007BFF;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-players {
+            font-size: 0.9em;
+            color: #FFA500;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-type {
+            font-size: 0.9em;
+            color: #D7707E;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-vps {
+            font-size: 0.9em;
+            color: #008080;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-category {
+            font-size: 0.9em;
+            color: #A020F0;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            color: #3e4236; /* Deep, rich green */
+            font-weight: bold;
+        }
+
+        .card-cost {
+            font-size: 0.9em;
+            color: #00B2A9;
+            background-color: #e6e6e6; /* Light background for contrast */
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .card-text {
+            font-family: 'Courier New', Courier, monospace; /* Typewriter-like font for a vintage feel */
+            color: #444; /* Subtle, readable grey */
+        }
+
+        .card-text {
+            font-size: 0.8em;
+            background-color: #f9f9f9; /* Very soft background for readability */
+            padding: 5px;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -60px 0 0 -60px;
+            z-index: 1000;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            #searchInput {
+                font-size: calc(1em + 2vw);
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="spinner"></div>
+
+<div class="search-container">
+    <div class="agricola-heading">Agricola Card Inspector</div>
+    <img src="{{ url_for('static', filename='agricola_title.webp') }}" alt="Agricola" style="display: block; margin: 0 auto 20px; max-width: 100%; height: auto;">
+    <input type="text" id="searchInput" placeholder="Start typing a card title...">
+    <input type="text" id="filterInput" placeholder="Filter by type, base, cost, deck...">
+    <ul id="results"></ul>
+    <img src="{{ url_for('static', filename='agricola.png') }}" alt="Agricola Title" style="display: block; margin: 0 auto 20px; max-width: 100%; height: auto;">
+    <a href="/latin_farmer_cardgrid">Click here for full list of cards</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+    $(window).on('load', function() {
+        $('.spinner').hide(); // Hide the spinner once the page is fully loaded
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentYear = new Date().getFullYear();
+        var copyrightElement = document.getElementById('copyright');
+        copyrightElement.innerHTML = '&copy; Mark Hartnady, ' + currentYear;
+    });
+
+    var cardsInfo = {{ cards_info|tojson|safe }};
+
+    $(document).ready(function(){
+        // Function to check if the card matches the additional filter
+        function matchesAdditionalFilter(card, filterQuery) {
+            filterQuery = filterQuery ? filterQuery.toLowerCase() : '';
+
+            // Check each card property if it exists and is not null before calling toLowerCase()
+            var matches = (card.type && card.type.toLowerCase().includes(filterQuery)) ||
+                          (card.category && card.category.toLowerCase().includes(filterQuery)) ||
+                          (card.cost && card.cost.toLowerCase().includes(filterQuery)) ||
+                          (card.base_expansion && card.base_expansion.toLowerCase().includes(filterQuery)) ||
+                          (card.deck && card.deck.toLowerCase().includes(filterQuery));
+
+            var now = new Date();
+            var timestamp = now.toLocaleString();
+            console.log(`[${timestamp}] Filtering by: ${filterQuery}, Card: ${card.title}, Match: ${matches}`);
+
+            return matches;
+        }
+
+        // Event listener for inputs
+        $('#searchInput, #filterInput').on('input', function() {
+            var query = $('#searchInput').val().toLowerCase();
+            var filterQuery = $('#filterInput').val().toLowerCase();
+            $('#results').empty();
+
+            cardsInfo.filter(card => card.title.toLowerCase().includes(query) &&
+                                    (filterQuery === '' || matchesAdditionalFilter(card, filterQuery))
+            ).forEach(card => {
+                $('#results').append(
+                    `<li>` +
+                        (card.title ? `<div class="card-title"><strong>${card.title}</strong></div>` : '') +
+                        (card.rating ? `<div class="card-rating">Rating: ${card.rating}</div>` : '') +
+                        (card.base_expansion ? `<div class="card-base">${card.base_expansion}</div>` : '') +
+                        (card.deck ? `<div class="card-deck">Deck:${card.deck}</div>` : '') +
+                        (card.type ? `<div class="card-type">${card.type}</div>` : '') +
+                        (card.category ? `<div class="card-category">${card.category}</div>` : '') +
+                        (card.players ? `<div class="card-players">Players:${card.players}</div>` : '') +
+                        (card.cost ? `<div class="card-cost">Cost:${card.cost}</div>` : '') +
+                        (card.vps ? `<div class="card-vps">VPs:${card.vps}</div>` : '') +
+                        (card.text ? `<div class="card-text">${card.text}</div>` : '') +
+                        (card.insight ? `<div class="card-description">${card.insight}</div>` : '') +
+                    `</li>`
+                );
+            });
+        });
+    });
+
+
+
+</script>
+
+
+</body>
+</html>
