@@ -6,7 +6,7 @@ Python script using SQLAlchemy and Flask
 MySQL database
 
 # host
-The application is hosted by PythonAnywhere.com 
+The application is hosted by PythonAnywhere.com
 Card Inspector: https://tinyurl.com/latinfarmer
 Card Database: https://tinyurl.com/latinfarmercards
 
