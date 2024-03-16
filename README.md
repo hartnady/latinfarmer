@@ -3,6 +3,7 @@ Agricola Card Inspector and Card Database
 
 # components
 Python script using SQLAlchemy and Flask
+
 MySQL database
 
 # host
