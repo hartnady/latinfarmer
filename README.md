@@ -7,6 +7,8 @@ MySQL database
 
 # host
 The application is hosted by PythonAnywhere.com 
+Card Inspector: https://tinyurl.com/latinfarmer
+Card Database: https://tinyurl.com/latinfarmercards
 
 # author
 Mark Hartnady (https://hartnady.com)
