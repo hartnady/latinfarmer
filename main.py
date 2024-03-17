@@ -1,15 +1,17 @@
 from datetime import datetime
 from flask import Flask, request, jsonify, abort, render_template
 from flask_sqlalchemy import SQLAlchemy
-import json, requests 
+import json, requests, openai
 
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['DEBUG'] = True 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app) 
 
-@app.route('/latin_farmer')
-def index():
+openai.api_key = app.config['OPEN_AI_KEY']
+
+@app.route('/inspect')
+def inspect():
     all_cards = AgricolaCard.query.with_entities(
         AgricolaCard.id, #0
         AgricolaCard.ext_id, #1
@@ -27,6 +29,7 @@ def index():
         AgricolaCard.text, #13
         AgricolaCard.insight, #14
         AgricolaCard.rating, #15
+        AgricolaCard.improvement_complement, #16
         AgricolaCard.source).order_by(AgricolaCard.deck, AgricolaCard.card_title).all()
     cards_info = [
         {
@@ -41,6 +44,7 @@ def index():
             'players': card[7],
             'base_expansion': card[4],
             'vps': card[9],
+            'improvement_complement': card[16],
             'id': card[1]
         }
         for card in all_cards
@@ -60,6 +64,7 @@ def search():
                 AgricolaCard.category.like(f'%{filter_query}%'),
                 AgricolaCard.deck.like(f'%{filter_query}%'),
                 AgricolaCard.cost.like(f'%{filter_query}%'),
+                AgricolaCard.improvement_complement.like(f'%{filter_query}%'),
                 AgricolaCard.base_expansion.like(f'%{filter_query}%')
             )
         )
@@ -72,7 +77,7 @@ def search():
 def get_cards():
     query = AgricolaCard.query
 
-    filterable_columns = ['card_title', 'rating', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players']
+    filterable_columns = ['card_title', 'rating', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players', 'improvement_complement']
     for column in filterable_columns:
         if column in request.args and request.args.get(column) != '':
             value = request.args.get(column)
@@ -96,25 +101,55 @@ def get_cards():
     return jsonify(cards_list)
 
 
-@app.route('/latin_farmer_cardgrid', methods=['GET'])
+@app.route('/list', methods=['GET'])
 def list_cards():
     # Retrieve query parameters for filtering
     query = AgricolaCard.query
     filters = request.args
 
     for key, value in filters.items():
-        if key in ['card_title', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players'] and value:
+        if key in ['card_title', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players', 'improvement_complement'] and value:
             query = query.filter(getattr(AgricolaCard, key).like(f"%{value}%"))
         elif key == 'rating' and value:
             query = query.filter_by(rating=value)
 
     # Sorting
     sort_by = request.args.get('sort_by', 'id')
-    if sort_by in ['card_title', 'rating', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players']:
+    if sort_by in ['card_title', 'rating', 'insight', 'text', 'cost', 'type', 'category', 'base_expansion', 'vps', 'players', 'improvement_complement']:
         query = query.order_by(getattr(AgricolaCard, sort_by))
 
     cards = query.all()
-    return render_template('list-cards.html', cards=cards) 
+    return render_template('list-cards.html', cards=cards)
+
+@app.route('/img')
+def img():
+    bypass_code = request.args.get('bypass')
+    if bypass_code:
+        # Redirect to the generate-image route with the bypass code
+        return redirect(url_for('generate_image', bypass_code=bypass_code))
+    return render_template('dall-e.html')
+
+@app.route('/generate-image')
+def generate_image():
+    today = datetime.now().date()
+
+    if 'last_access' in session and session['last_access'] == str(today):
+        session['access_count'] = session.get('access_count', 0) + 1
+    else:
+        session['access_count'] = 1
+        session['last_access'] = str(today)
+
+    if session['access_count'] > 3:
+        return jsonify({'error': 'Daily limit reached'}), 429  # HTTP 429 Too Many Requests
+
+    response = openai.Image.create(
+        model="dall-e-3",
+        prompt="A farm, containing sheep, boar, cattle, and fields of wheat and carrots, resembling the board game Agricola. A small medieval village appears in the background as the sun sets.",
+        size="1024x1024",
+        n=1
+    )
+    image_url = response['data'][0]['url']
+    return jsonify({'image_url': image_url})
 
 class AgricolaCard(db.Model):
     __tablename__ = 'agricola_cards'
