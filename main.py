@@ -10,6 +10,10 @@ db = SQLAlchemy(app)
 
 openai.api_key = app.config['OPEN_AI_KEY']
 
+@app.route('/', methods=['GET'])
+def root_get():
+    return redirect(url_for('inspect'))
+
 @app.route('/inspect')
 def inspect():
     all_cards = AgricolaCard.query.with_entities(
