@@ -26,4 +26,5 @@ CREATE TABLE agricola_cards (
   text MEDIUMTEXT,
   count INT,
   row_id INT
-);```
+);
+```
