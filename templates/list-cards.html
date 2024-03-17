@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Agricola Cards</title>
+    <title>Agricola Card List</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f4f1ea; color: #3e3a32; }
@@ -30,8 +31,9 @@
 
     <input type="text" id="filter_card_title" placeholder="Filter by Card Title">
     <input type="text" id="filter_rating" placeholder="Filter by Rating">
-    <input type="text" id="filter_insight" placeholder="Filter by Insight">
-    <input type="text" id="filter_text" placeholder="Filter by Text">
+    <!-- input type="text" id="filter_insight" placeholder="Filter by Insight" -->
+    <!-- input type="text" id="filter_improvement_complement" placeholder="Filter by Improvement Compl." -->
+    <input type="text" id="filter_text" placeholder="Filter by Card Text">
     <input type="text" id="filter_cost" placeholder="Filter by Cost">
     <input type="text" id="filter_type" placeholder="Filter by Type">
     <input type="text" id="filter_category" placeholder="Filter by Category">
@@ -45,8 +47,9 @@
             <tr>
                 <th onclick="sortData('card_title')">Card Title</th>
                 <th onclick="sortData('rating')">Rating</th>
+                <th onclick="sortData('text')">Card Text</th>
+                <th onclick="sortData('improvement_complement')">Improvement Complement</th>
                 <th onclick="sortData('insight')">Insight</th>
-                <th onclick="sortData('text')">Text</th>
                 <th onclick="sortData('cost')">Cost</th>
                 <th onclick="sortData('type')">Type</th>
                 <th onclick="sortData('category')">Category</th>
@@ -61,7 +64,7 @@
     </table>
 
     <div align="center">
-        <a href="/latin_farmer">Click here for card inspector</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
+        <a href="/inspect">Click here for card inspector</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
     </div>
 
     <script>
@@ -82,6 +85,7 @@
                 card_title: $('#filter_card_title').val(),
                 rating: $('#filter_rating').val(),
                 insight: $('#filter_insight').val(),
+                improvement_complement: $('#filter_improvement_complement').val(),
                 text: $('#filter_text').val(),
                 cost: $('#filter_cost').val(),
                 type: $('#filter_type').val(),
@@ -97,8 +101,9 @@
                     let row = `<tr>
                                 <td>${card.card_title}</td>
                                 <td>${card.rating}</td>
-                                <td>${card.insight}</td>
                                 <td>${card.text}</td>
+                                <td>${card.improvement_complement}</td>
+                                <td>${card.insight}</td>
                                 <td>${card.cost}</td>
                                 <td>${card.type}</td>
                                 <td>${card.category}</td>
