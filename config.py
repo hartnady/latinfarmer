@@ -9,3 +9,5 @@ SQLALCHEMY_DATABASE_URI = (
 )
 SQLALCHEMY_ENGINE_OPTIONS = {"pool_recycle": 299}
 SQLALCHEMY_TRACK_MODIFICATIONS = False 
+
+OPEN_AI_KEY = 'your_open_ai_key_here'
