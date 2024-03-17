@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Image Generator</title>
+    <style>
+
+        /* Spinner and loading text CSS */
+        .spinner {
+          border: 16px solid #f3f3f3; /* Light grey */
+          border-top: 16px solid #3498db; /* Blue */
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear infinite;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          margin-right: -50%;
+          transform: translate(-50%, -50%);
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+          position: fixed;
+          top: 45%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          font-family: 'Arial', sans-serif;
+          font-size: 20px;
+          color: #3498db;
+        }
+        .loading-percentage {
+          position: fixed;
+          top: 55%; /* Positioned under the spinner */
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          font-size: 18px;
+          font-family: 'Arial', sans-serif;
+          color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-text">Retrieving new image from Dall-E, stand by...</div>
+    <div class="spinner" id="spinner"></div>
+    <div class="loading-percentage" id="loadingPercentage">0%</div>
+    <div id="imageContainer"></div> <!-- Container where the image will be added -->
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let percentage = 0;
+        const interval = 15; // Interval in milliseconds for the counter update
+        const duration = 15000; // Duration of the loading in milliseconds
+        const percentageInterval = setInterval(() => {
+            if (percentage >= 100) {
+                clearInterval(percentageInterval);
+                document.getElementById('spinner').style.display = 'none';
+                document.querySelector('.loading-text').style.display = 'none';
+                document.getElementById('loadingPercentage').style.display = 'none';
+            } else {
+                percentage++;
+                document.getElementById('loadingPercentage').innerText = `${percentage}%`;
+            }
+        }, duration / 100); // Divide by 100 to update every 1% of the total duration
+
+        fetch('/generate-image')
+        .then(response => {
+            if (response.status === 429) {
+                document.getElementById('spinner').style.display = 'none';
+                document.querySelector('.loading-text').style.display = 'none';
+                document.getElementById('loadingPercentage').style.display = 'none';
+                alert('You have reached the limit of reloading this page for today. Please come back tomorrow! (sorry, the service is not free!).');
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;  // Early exit if the limit is reached
+
+            let img = new Image();
+            img.onload = function() {
+                clearInterval(percentageInterval); // Ensure it stops when the image is loaded
+                document.getElementById('loadingPercentage').innerText = '100%'; // Set to 100% on image load
+                setTimeout(() => { // Slight delay to ensure user sees 100%
+                    document.getElementById('spinner').style.display = 'none';
+                    document.querySelector('.loading-text').style.display = 'none';
+                    document.getElementById('loadingPercentage').style.display = 'none';
+                }, 500);
+            };
+            img.src = data.image_url;
+            document.getElementById('imageContainer').appendChild(img);
+        })
+        .catch(error => console.error('Error fetching image:', error));
+    });
+    </script>
+</body>
+</html>
