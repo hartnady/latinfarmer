@@ -30,3 +30,7 @@ CREATE TABLE agricola_cards (
   row_id INT
 );
 ```
+
+## Loading Data
+
+Once the MySQL table is created, load the data from the CSV into it
