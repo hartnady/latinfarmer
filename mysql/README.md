@@ -3,7 +3,7 @@
 ## Data Source
 
 CSV:  https://docs.google.com/spreadsheets/d/1F0aWurN1tqbUcx7EQEeQKWgqnp7kJj3DLsVlhtWyz5A/edit#gid=0
-Data has been conveniently loaded into [cards_info_utf8.csv](./mysql/cards_info_utf8.csv) available in this git repo
+Data has been conveniently loaded into [cards_info_utf8.csv](./cards_info_utf8.csv) available in this git repo
 
 ## MySQL
 
