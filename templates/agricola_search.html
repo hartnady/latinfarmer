@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Search Agricola Cards</title>
+    <title>Agricola Card Inspector</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body, html {
@@ -231,8 +232,8 @@
     <input type="text" id="searchInput" placeholder="Start typing a card title...">
     <input type="text" id="filterInput" placeholder="Filter by type, base, cost, deck...">
     <ul id="results"></ul>
-    <img src="{{ url_for('static', filename='agricola.png') }}" alt="Agricola Title" style="display: block; margin: 0 auto 20px; max-width: 100%; height: auto;">
-    <a href="/latin_farmer_cardgrid">Click here for full list of cards</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
+    <a href="/img" target="_BLANK"><img src="{{ url_for('static', filename='agricola.png') }}" alt="Agricola Title" style="display: block; margin: 0 auto 20px; max-width: 100%; height: auto;"></a>
+    <a href="/list">Click here for full list of cards</a> | <a id="copyright" href="https://hartnady.com">&copy; Mark Hartnady, 2024</a>
 
 </div>
 
@@ -290,7 +291,8 @@
                         (card.players ? `<div class="card-players">Players:${card.players}</div>` : '') +
                         (card.cost ? `<div class="card-cost">Cost:${card.cost}</div>` : '') +
                         (card.vps ? `<div class="card-vps">VPs:${card.vps}</div>` : '') +
-                        (card.text ? `<div class="card-text">${card.text}</div>` : '') +
+                        (card.text ? `<div class="card-text"><strong>${card.text}</strong></div>` : '') +
+                        (card.improvement_complement ? `<div class="card-text">Improvement Complement: ${card.improvement_complement}</div>` : '') +
                         (card.insight ? `<div class="card-description">${card.insight}</div>` : '') +
                     `</li>`
                 );
