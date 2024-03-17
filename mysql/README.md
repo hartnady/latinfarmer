@@ -6,7 +6,8 @@ Data source origin:  https://docs.google.com/spreadsheets/d/1F0aWurN1tqbUcx7EQEe
 
 To create the database table used by the app, issue the following MySQL command:
 
-```CREATE TABLE agricola_cards (
+```
+CREATE TABLE agricola_cards (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   ext_id INT UNIQUE,
   card_title VARCHAR(80),
