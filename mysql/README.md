@@ -36,3 +36,5 @@ CREATE TABLE agricola_cards (
 ## Loading Data
 
 Once the MySQL table is created, load the data from the CSV into it
+
+https://stackoverflow.com/questions/3635166/how-do-i-import-csv-file-into-a-mysql-table
