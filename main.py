@@ -68,7 +68,6 @@ def search():
                 AgricolaCard.category.like(f'%{filter_query}%'),
                 AgricolaCard.deck.like(f'%{filter_query}%'),
                 AgricolaCard.cost.like(f'%{filter_query}%'),
-                AgricolaCard.improvement_complement.like(f'%{filter_query}%'),
                 AgricolaCard.base_expansion.like(f'%{filter_query}%')
             )
         )
